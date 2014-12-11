@@ -83,28 +83,6 @@ package com.xhj.www.utils
 		 */		
 		public static function getAroundRangeArray(mapTile:MapTile, range:int):Array
 		{
-			
-			/*var x:int = mapTile.getPosX();
-			var y:int = mapTile.getPosY();
-			var tile:MapTile;
-			for (var i:int = -range; i <= range; ++i)
-			{
-				for (var j:int = -range; j <= range; ++j)
-				{
-					if (i == 0 && j == 0)
-					{
-						continue;
-					}
-					tile = getMapTileByDirection(mapTile, i, j);
-				}
-			}
-			for (var i:int = x - range; i <= x + range; ++i)
-			{
-				for (var j:int = y - range; j <= j + range; ++j)
-				{
-					tile = getMapTileByDirection(mapTile, i - x, j - y);
-				}
-			}*/
 		}
 		
 		/**
