@@ -30,8 +30,8 @@ package com.xhj.www.utils
 			var count:int;
 			for (i = 0; i < 4; ++i)
 			{
-				dltX = Math.sin(i * Math.PI);
-				dltY = Math.cos(i * Math.PI);
+				dltX = Math.sin(i * Math.PI / 2);
+				dltY = Math.cos(i * Math.PI / 2);
 				tile = getMapTileByDirection(crtTile, dltX, dltY);//相邻格子
 				while (count < range && tile && !tile.getIsDark())//超过距离/格子超过边界/是障碍物
 				{
@@ -84,7 +84,7 @@ package com.xhj.www.utils
 		public static function getAroundRangeArray(mapTile:MapTile, range:int):Array
 		{
 			
-			var x:int = mapTile.getPosX();
+			/*var x:int = mapTile.getPosX();
 			var y:int = mapTile.getPosY();
 			var tile:MapTile;
 			for (var i:int = -range; i <= range; ++i)
@@ -104,12 +104,86 @@ package com.xhj.www.utils
 				{
 					tile = getMapTileByDirection(mapTile, i - x, j - y);
 				}
-			}
+			}*/
 		}
 		
-		public static function getAroundTiles(mapTile:MapTile):Array
+		/**
+		 * 获取当前格子一定步数内的所有可移动格子
+		 * @param mapTile 当前格子
+		 * @param distance 步数
+		 * @return 格子列表
+		 * 
+		 */		
+		public static function getAroundTiles(mapTile:MapTile, distance:int):Array
 		{
-			
+			var dis:int = 0;
+			var dltX:int;
+			var dltY:int;
+			var tile:MapTile;
+			var nearTile:MapTile;
+			var i:int;
+			var openAry:Array = [];//需要检测的格子
+			var closeAry:Array = [];//已检测过的格子
+			var rtnAry:Array = [];//符合条件的格子
+			openAry.push(mapTile);
+			while (dis <= distance)
+			{
+				for each (tile in openAry)
+				{
+					openAry.splice(openAry.indexOf(tile), 1);//已检测格子从open中移除
+					closeAry.push(tile);//已检测的格子放入close
+					if ((tile.getEmpty() || !tile.getIsSameNation(App.myNation)) && tile != mapTile)//可行走，敌人或者空地/不是初始点
+					{
+						rtnAry.push(tile);//放入rtn
+					}
+					else if (tile.getIsDark())//障碍物
+					{
+						continue;
+					}
+					for (i = 0; i < 4; ++i)
+					{
+						dltX = Math.sin(i * Math.PI / 2);//0,1,0,-1
+						dltY = Math.cos(i * Math.PI / 2);//1,0,-1,0
+						nearTile = getMapTileByDirection(mapTile, dltX, dltY);//相邻格子
+						if (nearTile)//格子存在
+						{
+							if (openAry.indexOf(nearTile) == -1 && closeAry.indexOf(nearTile) == -1)//没有被添加到open中，且没有被检测过
+							{
+								openAry.push(nearTile);
+							}
+						}
+					}
+					
+				}
+				++dis;
+			}
+			return rtnAry;
+		}
+		
+		/**
+		 * 获得相邻格子列表
+		 * @param mapTile
+		 * @return 
+		 * 
+		 */		
+		public static function getNearTiles(mapTile:MapTile):Array
+		{
+			var dltX:int;
+			var dltY:int;
+			var tile:MapTile;
+			var i:int;
+			var ary:Array = [];
+			for (i = 0; i < 4; ++i)
+			{
+				dltX = Math.sin(i * Math.PI / 2);
+				dltY = Math.cos(i * Math.PI / 2);
+				tile = getMapTileByDirection(mapTile, dltX, dltY);//相邻格子
+				if (tile)
+				{
+					ary.push(tile);
+				}
+			}
+			return ary;
 		}
 		
 		public static function getMapTile(pos:int):MapTile
