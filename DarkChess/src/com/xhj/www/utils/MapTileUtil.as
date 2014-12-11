@@ -95,7 +95,6 @@ package com.xhj.www.utils
 						continue;
 					}
 					tile = getMapTileByDirection(mapTile, i, j);
-					if (tile && tile.
 				}
 			}
 			for (var i:int = x - range; i <= x + range; ++i)
