@@ -2,6 +2,8 @@
 bin/
 bin-debug/
 bin-release/
+.actionScriptProperties
+.project
 
 # Other files and folders
 .settings/

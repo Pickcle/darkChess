@@ -27,7 +27,7 @@ package com.xhj.www.component
 		protected var _pos:uint;		//坐标
 		protected var _nation:int;		//国家
 		protected var _type:int;		//人物种类
-		protected var _targetList:Array;//可移动格子列表
+		protected var _targetList:Array = [];//可移动格子列表
 		protected var _isDark:Boolean;
 		
 		protected var _spriteImg:Bitmap;
@@ -55,7 +55,7 @@ package com.xhj.www.component
 			_spriteName.text = getSpriteName();
 			this.addChild(_spriteName);
 			
-			setIsDark(false);
+			setIsDark(true);
 			
 			_spriteName.x = (_spriteImg.width - _spriteName.width) / 2;
 			_spriteName.y = 10;
@@ -63,6 +63,11 @@ package com.xhj.www.component
 		
 		override protected function uninstallComponent():void
 		{
+			if (_targetList)
+			{
+				_targetList.length = 0;
+			}
+			_targetList = null;
 		}
 		
 		override protected function installListener():void
@@ -186,6 +191,12 @@ package com.xhj.www.component
 			{
 				mapTile.turnGreen();
 			}
+			_targetList = tiles;
+		}
+		
+		public function checkInTargetList(mapTile:MapTile):Boolean
+		{
+			return _targetList.indexOf(mapTile) != -1;
 		}
 		
 		protected function getAttackRangeList():Array

@@ -77,7 +77,7 @@ package com.xhj.www.layer
 			var targetTile:MapTile = ((e.currentTarget as GameObjectBase).parent as MapTile);
 			if (targetTile.getEmpty())//点击空地
 			{
-				if (_status == 2)//移动
+				if (_status == 2 && _selectedSprite.checkInTargetList(targetTile))//移动
 				{
 					_selectedSprite.goto(targetTile);
 				}
@@ -97,7 +97,7 @@ package com.xhj.www.layer
 				sprite.showAttackRange();
 				return;
 			}
-			if (sprite.getNation() != GameManager.getCurrentNation() && _status == 2)//点击敌人
+			if (sprite.getNation() != GameManager.getCurrentNation() && _status == 2  && _selectedSprite.checkInTargetList(targetTile))//点击敌人
 			{
 				_selectedSprite.goto(targetTile);
 				return;

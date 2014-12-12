@@ -36,7 +36,7 @@ package com.xhj.www.utils
 					
 				}
 				
-				removeFromParent(displayObject);
+				removeFromParent(object);
 			}
 		}
 		

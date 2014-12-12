@@ -26,6 +26,7 @@ package com.xhj.www
 					break;
 				}
 			}
+			sprite.destroy();
 		}
 		
 		public static function getCharacterArrayByNation(nation:int):Array
