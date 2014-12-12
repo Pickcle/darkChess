@@ -1,5 +1,6 @@
 package com.xhj.www.component
 {
+	import com.xhj.www.GlobalParam;
 	import com.xhj.www.LayerManager;
 	import com.xhj.www.RoundManager;
 	import com.xhj.www.consts.NationType;
@@ -8,6 +9,7 @@ package com.xhj.www.component
 	import com.xhj.www.utils.BitmapUtil;
 	import com.xhj.www.utils.DisplayObjectUtil;
 	import com.xhj.www.utils.MapTileUtil;
+	import com.xhj.www.utils.TweenLite;
 	
 	import flash.display.Bitmap;
 	import flash.events.MouseEvent;
@@ -38,7 +40,7 @@ package com.xhj.www.component
 		
 		override protected function installComponent():void
 		{
-			setIsDark(true);
+			_spriteImg = new Bitmap();
 			this.addChild(_spriteImg);
 			
 			var tf:TextFormat = new TextFormat();
@@ -49,14 +51,14 @@ package com.xhj.www.component
 			_spriteName.width = 80;
 			_spriteName.height = 25;
 			_spriteName.textColor = getNationColor();
-			_spriteName.x = (_spriteImg.width - _spriteName.width) / 2;
-			_spriteName.y = 15;
 			_spriteName.defaultTextFormat = tf;
 			_spriteName.text = getSpriteName();
 			this.addChild(_spriteName);
 			
-			this.mouseEnabled = false;
-			this.mouseChildren = false;
+			setIsDark(false);
+			
+			_spriteName.x = (_spriteImg.width - _spriteName.width) / 2;
+			_spriteName.y = 10;
 		}
 		
 		override protected function uninstallComponent():void
@@ -79,7 +81,8 @@ package com.xhj.www.component
 		public function goto(mapTile:MapTile):void
 		{
 			var oldTile:MapTile = MapTileUtil.getMapTile(_pos);
-			if (oldTile.getEmpty())//空地
+			oldTile.setCharacter(null);
+			if (mapTile.getEmpty())//空地
 			{
 				move(mapTile);
 			}
@@ -87,8 +90,6 @@ package com.xhj.www.component
 			{
 				attack(mapTile);
 			}
-			oldTile.setCharacter(null);
-			mapTile.setCharacter(this);
 		}
 		
 		public function die():void
@@ -97,27 +98,72 @@ package com.xhj.www.component
 			LayerManager.removeCharacter(this);
 		}
 		
+		protected function moveThisToTile(targetTile:MapTile, callback:Function):void
+		{
+			var crtTile:MapTile = MapTileUtil.getMapTile(_pos);
+			var dltX:Number = (targetTile.getPosX() - crtTile.getPosX());
+			var dltY:Number = (targetTile.getPosY() - crtTile.getPosY());
+			var targetX:Number;
+			var targetY:Number;
+			if (dltX > 0 || dltY > 0)//向右
+			{
+				targetX = this.x + MapTile.TILE_WIDTH / 2;
+			}
+			else//向左
+			{
+				targetX = this.x - MapTile.TILE_WIDTH / 2;
+			}
+			if (dltX - dltY > 0)//向上
+			{
+				targetY = this.y - MapTile.TILE_HEIGHT / 2;
+			}
+			else//向下
+			{
+				targetY = this.y + MapTile.TILE_HEIGHT / 2;
+			}
+			TweenLite.to(this, 1, {x:targetX, y:targetY}, 0, callback);
+		}
+		
 		protected function move(mapTile:MapTile):void
 		{
-			doMoveAction(mapTile);
+			doMoveAction(mapTile, actionCompleteHandler);
 		}
 		
 		protected function attack(mapTile:MapTile):void
 		{
+			doAttackAction(mapTile, actionCompleteHandler);
+		}
+		
+		protected function actionCompleteHandler(mapTile:MapTile):void
+		{
 			mapTile.clear();
-			doAttackAction(mapTile);
-		}
-		
-		protected function doMoveAction(mapTile:MapTile):void
-		{
-			
+			mapTile.setCharacter(this);
 			RoundManager.nextRound();
 		}
 		
-		protected function doAttackAction(mapTile:MapTile):void
+		protected function doMoveAction(mapTile:MapTile, callback:Function):void
 		{
+			moveThisToTile(mapTile, function():void
+			{
+				if (null != callback)
+				{
+					callback.apply(this, [mapTile]);
+				}
+			}
+			);
 			
-			RoundManager.nextRound();
+		}
+		
+		protected function doAttackAction(mapTile:MapTile, callback:Function):void
+		{
+			moveThisToTile(mapTile, function():void
+			{
+				if (null != callback)
+				{
+					callback.apply(this, [mapTile]);
+				}
+			}
+			);
 		}
 		
 		public function flip():void
@@ -129,7 +175,8 @@ package com.xhj.www.component
 		private function setIsDark(value:Boolean):void
 		{
 			_isDark = value;
-			_spriteImg = _isDark ? BitmapUtil.getBitmap("SPRITE_9") : BitmapUtil.getBitmap("SPRITE_" + _type);
+			_spriteImg.bitmapData = _isDark ? BitmapUtil.getBitmapData("SPRITE_9") : BitmapUtil.getBitmapData("SPRITE_" + _type);
+			_spriteName.visible = !_isDark;
 		}
 		
 		public function showAttackRange():void
@@ -143,7 +190,7 @@ package com.xhj.www.component
 		
 		protected function getAttackRangeList():Array
 		{
-			return null;
+			return [];
 		}
 		
 		protected function getNationColor():uint
@@ -164,11 +211,6 @@ package com.xhj.www.component
 			return result;
 		}
 		
-		public function checkCanReach(mapTile:MapTile):Boolean
-		{
-			return _targetList.indexOf(mapTile) != -1;
-		}
-		
 		public function setNation(nation:int):void
 		{
 			_nation = nation;
@@ -183,6 +225,14 @@ package com.xhj.www.component
 		public function setPos(pos:int):void
 		{
 			_pos = pos;
+			
+			var mapTile:MapTile = MapTileUtil.getMapTile(_pos);
+			if (mapTile)
+			{
+				const offsetY:int = GlobalParam.NUM_OFFSET_SPRITE_ON_MAPTILE_Y;
+				this.x = mapTile.x + (mapTile.width - this.width) / 2;
+				this.y = mapTile.y + (this.height == 85 ? offsetY : offsetY + 8);
+			}
 		}
 		
 		public function getPos():uint

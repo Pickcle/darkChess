@@ -1,14 +1,19 @@
 package
 {
+	import com.demonsters.debugger.MonsterDebugger;
 	import com.xhj.www.App;
 	import com.xhj.www.AssetsManager;
+	import com.xhj.www.RoundManager;
 	import com.xhj.www.SceneManager;
 	import com.xhj.www.consts.SceneType;
+	import com.xhj.www.layer.map.MapTile;
+	import com.xhj.www.scene.GameScene;
 	
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.system.Security;
 	
 	[SWF(frameRete="30", width="1280", height="720")]
@@ -38,12 +43,22 @@ package
 			App.myNation = 1;
 			AssetsManager.init(startGame);
 			
-//			MonsterDebugger.initialize(this);
+			MonsterDebugger.initialize(this);
+			
+			stage.addEventListener(MouseEvent.CLICK, function (e:MouseEvent):void
+			{
+				trace(e.target.toString());
+				if (e.target is MapTile)
+				{
+					trace((e.target as MapTile).getPosX() + "" + (e.target as MapTile).getPosY());
+				}
+			});
 		}
 		
 		private function startGame():void
 		{
 			SceneManager.changeScene(SceneType.GAME);
+			RoundManager.nextRound();
 		}
 		
 		

@@ -29,7 +29,7 @@ package com.xhj.www.utils
 				}
 				else if (object is Bitmap)
 				{
-					BitmapUtil.disposeBitmap(object as Bitmap);
+					BitmapUtil.disposeBitmapData(object as Bitmap);
 				}
 				else if (object is TextField)
 				{

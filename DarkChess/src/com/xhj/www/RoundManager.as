@@ -20,10 +20,21 @@ package com.xhj.www
 		
 		private static function startRound():void
 		{
-			if (s_currentRound == App.myNation)
-			{
-				(SceneManager.getCurrentScene() as GameScene).startRound();
-			}
+//			if (s_currentRound == App.myNation)
+//			{
+//				(SceneManager.getCurrentScene() as GameScene).startRound();
+//			}
+//			else
+//			{
+//				nextRound();
+//			}
+			//test
+			(SceneManager.getCurrentScene() as GameScene).startRound();
+		}
+		
+		public static function getCurrentRound():int
+		{
+			return s_currentRound;
 		}
 		
 	}

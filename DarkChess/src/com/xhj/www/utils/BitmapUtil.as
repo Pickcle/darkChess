@@ -11,7 +11,7 @@ package com.xhj.www.utils
 		{
 		}
 		
-		public static function disposeBitmap(bitmap:Bitmap):void
+		public static function disposeBitmapData(bitmap:Bitmap):void
 		{
 			if (bitmap && bitmap.bitmapData)
 			{
@@ -22,9 +22,15 @@ package com.xhj.www.utils
 		
 		public static function getBitmap(resName:String):Bitmap
 		{
+			var bmd:BitmapData = getBitmapData(resName);
+			return new Bitmap(bmd);
+		}
+		
+		public static function getBitmapData(resName:String):BitmapData
+		{
 			var resClass:Class = getDefinitionByName(resName) as Class;
 			var bmd:BitmapData = BitmapData(new resClass());
-			return new Bitmap(bmd);
+			return bmd;
 		}
 			
 	}

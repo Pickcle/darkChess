@@ -1,6 +1,7 @@
 package com.xhj.www.layer
 {
 	import com.xhj.www.App;
+	import com.xhj.www.GameManager;
 	import com.xhj.www.GlobalParam;
 	import com.xhj.www.LayerManager;
 	import com.xhj.www.RoundManager;
@@ -49,8 +50,14 @@ package com.xhj.www.layer
 		
 		public function startRound():void
 		{
+			this.mouseChildren = true;
 			_status = 1;
 			resetMapTile();
+		}
+		
+		public function endRound():void
+		{
+			this.mouseChildren = false;
 		}
 		
 		private function resetMapTile():void
@@ -70,9 +77,9 @@ package com.xhj.www.layer
 			var targetTile:MapTile = ((e.currentTarget as GameObjectBase).parent as MapTile);
 			if (targetTile.getEmpty())//点击空地
 			{
-				if (_status == 2 && _selectedSprite.checkCanReach(targetTile))//移动
+				if (_status == 2)//移动
 				{
-					sprite.goto(targetTile);
+					_selectedSprite.goto(targetTile);
 				}
 				return;
 			}
@@ -82,16 +89,17 @@ package com.xhj.www.layer
 				sprite.flip();
 				return;
 			}
-			if (sprite.getNation() == App.myNation)//点击自己士兵
+			if (sprite.getNation() == GameManager.getCurrentNation())//点击自己士兵
 			{
+				resetMapTile();
 				_status = 2;
 				_selectedSprite = sprite;
 				sprite.showAttackRange();
 				return;
 			}
-			if (sprite.getNation() != App.myNation && _status == 2 && _selectedSprite.checkCanReach(targetTile))//点击敌人
+			if (sprite.getNation() != GameManager.getCurrentNation() && _status == 2)//点击敌人
 			{
-				sprite.goto(targetTile);
+				_selectedSprite.goto(targetTile);
 				return;
 			}
 			

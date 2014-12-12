@@ -34,7 +34,8 @@ package com.xhj.www.layer.map
 		
 		override protected function installComponent():void
 		{
-			_tileImg = BitmapUtil.getBitmap("TILE_EMPTY");
+			_tileImg = new Bitmap();
+			_tileImg.bitmapData = BitmapUtil.getBitmapData("TILE_EMPTY");
 			this.addChild(_tileImg);
 			
 			TILE_WIDTH = _tileImg.width;
@@ -52,6 +53,8 @@ package com.xhj.www.layer.map
 			_hitShape.graphics.endFill();
 			this.addChild(_hitShape);
 			_hitShape.addEventListener(MouseEvent.CLICK, onClickHandler);
+			
+			this.mouseEnabled = false;
 		}
 		
 		public function setCharacter(sprite:AbstractSprite):void
@@ -91,26 +94,26 @@ package com.xhj.www.layer.map
 		
 		public function turnRed():void
 		{
-			BitmapUtil.disposeBitmap(_tileImg);
-			_tileImg = BitmapUtil.getBitmap("TILE_RED");
+			BitmapUtil.disposeBitmapData(_tileImg);
+			_tileImg.bitmapData = BitmapUtil.getBitmapData("TILE_RED");
 		}
 		
 		public function turnGreen():void
 		{
-			BitmapUtil.disposeBitmap(_tileImg);
-			_tileImg = BitmapUtil.getBitmap("TILE_GREEN");
+			BitmapUtil.disposeBitmapData(_tileImg);
+			_tileImg.bitmapData = BitmapUtil.getBitmapData("TILE_GREEN");
 		}
 		
 		public function turnWhite():void
 		{
-			BitmapUtil.disposeBitmap(_tileImg);
-			_tileImg = BitmapUtil.getBitmap("TILE_EMPTY");
+			BitmapUtil.disposeBitmapData(_tileImg);
+			_tileImg.bitmapData = BitmapUtil.getBitmapData("TILE_EMPTY");
 		}
 		
 		public function turnBlack():void
 		{
-			BitmapUtil.disposeBitmap(_tileImg);
-			_tileImg = BitmapUtil.getBitmap("TILE_BLOCK");
+			BitmapUtil.disposeBitmapData(_tileImg);
+			_tileImg.bitmapData = BitmapUtil.getBitmapData("TILE_BLOCK");
 		}
 		
 		protected function onClickHandler(e:MouseEvent):void

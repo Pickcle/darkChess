@@ -35,13 +35,12 @@ package com.xhj.www.scene
 		
 		public function startRound():void
 		{
-			_mapLayer.mouseChildren = true;
 			_mapLayer.startRound();
 		}
 		
 		public function endRound():void
 		{
-			_mapLayer.mouseChildren = false;
+			_mapLayer.endRound();
 		}
 	}
 }
