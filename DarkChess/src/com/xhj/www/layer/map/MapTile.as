@@ -13,8 +13,8 @@ package com.xhj.www.layer.map
 	
 	public class MapTile extends AStarNode
 	{
-		public static var TILE_WIDTH:int;
-		public static var TILE_HEIGHT:int;
+		public static var TILE_WIDTH:Number;
+		public static var TILE_HEIGHT:Number;
 		
 		protected var _tileImg:Bitmap;
 		protected var _pos:int;
@@ -136,7 +136,7 @@ package com.xhj.www.layer.map
 		 */		
 		public function getIsBlock():Boolean
 		{
-			return !(getEmpty() || getIsSameNation(GameManager.getCurrentNation()));
+			return !(getEmpty() || (!getIsDark() && getIsSameNation(GameManager.getCurrentNation())));
 		}
 		
 		public function getEmpty():Boolean

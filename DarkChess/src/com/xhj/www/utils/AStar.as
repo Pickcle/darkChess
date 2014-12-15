@@ -36,19 +36,19 @@ package com.xhj.www.utils
 				{
 					return getPath(tile);
 				}
-				close.push(startTile);//放入close
+				close.push(tile);//放入close
 				for (j = 0; j < 4; ++j)//获取相邻格子
 				{
 					var dltX:int = Math.sin(j * Math.PI / 2);
 					var dltY:int = Math.cos(j * Math.PI / 2);
 					var nearTile:MapTile = MapTileUtil.getMapTileByXY(tile.getPosX() + dltX, tile.getPosY() + dltY);
 					//相邻格子存在且不是障碍且不在close中
-					if (nearTile && !nearTile.getIsBlock() && close.indexOf(nearTile) == -1)
+					if ((nearTile && !nearTile.getIsBlock() && close.indexOf(nearTile) == -1) || nearTile == endTile)
 					{
 						if (open.indexOf(nearTile) == -1)
 						{
-							nearTile.parentNode = tile;
-							nearTile.g = 1;
+ 							nearTile.parentNode = tile;
+							nearTile.g = tile.g + 1;
 							//使用曼哈顿估算方法
 							nearTile.h = manhattan(nearTile, endTile);
 							nearTile.f = nearTile.g + nearTile.h;
@@ -77,16 +77,16 @@ package com.xhj.www.utils
 		
 		public static function sortByF(tileA:MapTile, tileB:MapTile):int
 		{
-			return tileB.f - tileA.f;
+			return tileA.f - tileB.f;
 		}
 		
 		public static function getPath(tile:MapTile):Array
 		{
-			var ary:Array = [];
+			var ary:Array = [tile];
 			while (tile.parentNode)
 			{
 				ary.push(tile.parentNode);
-				tile = tile.parentNode;
+				tile = tile.parentNode as MapTile;
 			}
 			return ary;
 		}

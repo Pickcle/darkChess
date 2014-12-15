@@ -6,6 +6,7 @@ package com.xhj.www.component
 	import com.xhj.www.consts.NationType;
 	import com.xhj.www.layer.MapLayer;
 	import com.xhj.www.layer.map.MapTile;
+	import com.xhj.www.utils.AStar;
 	import com.xhj.www.utils.BitmapUtil;
 	import com.xhj.www.utils.DisplayObjectUtil;
 	import com.xhj.www.utils.MapTileUtil;
@@ -16,7 +17,7 @@ package com.xhj.www.component
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-
+	
 	/**
 	 * 人物基类
 	 * @author ASUS
@@ -87,13 +88,15 @@ package com.xhj.www.component
 		{
 			var oldTile:MapTile = MapTileUtil.getMapTile(_pos);
 			oldTile.setCharacter(null);
+			var ways:Array = getWays(oldTile, mapTile);
 			if (mapTile.getEmpty())//空地
 			{
-				move(mapTile);
+				move(ways);
 			}
 			else//敌人
 			{
-				attack(mapTile);
+				move(ways);
+//				attack(mapTile);
 			}
 		}
 		
@@ -103,77 +106,60 @@ package com.xhj.www.component
 			LayerManager.removeCharacter(this);
 		}
 		
-		protected function moveThisToTile(targetTile:MapTile, callback:Function):void
+		protected function getWays(startTile:MapTile, endTile:MapTile):Array
+		{
+			return AStar.find(startTile, endTile);
+		}
+		
+		protected function move(ways:Array):void
+		{
+			if (0 == ways.length)
+			{
+				return;
+			}
+			var nextTile:MapTile = ways.pop();
+			if (nextTile.getPos() != _pos)//不是当前格子
+			{
+				moveThisToTile(nextTile, ways);
+			}
+			else
+			{
+				move(ways);
+			}
+		}
+		
+		protected function moveThisToTile(targetTile:MapTile, ways:Array):void
 		{
 			var crtTile:MapTile = MapTileUtil.getMapTile(_pos);
 			var dltX:Number = (targetTile.getPosX() - crtTile.getPosX());
 			var dltY:Number = (targetTile.getPosY() - crtTile.getPosY());
-			var targetX:Number;
-			var targetY:Number;
-			if (dltX > 0 || dltY > 0)//向右
-			{
-				targetX = this.x + MapTile.TILE_WIDTH / 2;
-			}
-			else//向左
-			{
-				targetX = this.x - MapTile.TILE_WIDTH / 2;
-			}
-			if (dltX - dltY > 0)//向上
-			{
-				targetY = this.y - MapTile.TILE_HEIGHT / 2;
-			}
-			else//向下
-			{
-				targetY = this.y + MapTile.TILE_HEIGHT / 2;
-			}
-			TweenLite.to(this, 1, {x:targetX, y:targetY}, 0, callback);
-		}
-		
-		protected function move(mapTile:MapTile):void
-		{
-			doMoveAction(mapTile, actionCompleteHandler);
-		}
-		
-		protected function attack(mapTile:MapTile):void
-		{
-			doAttackAction(mapTile, actionCompleteHandler);
-		}
-		
-		protected function actionCompleteHandler(mapTile:MapTile):void
-		{
-			mapTile.clear();
-			mapTile.setCharacter(this);
-			RoundManager.nextRound();
-		}
-		
-		protected function doMoveAction(mapTile:MapTile, callback:Function):void
-		{
-			moveThisToTile(mapTile, function():void
-			{
-				if (null != callback)
-				{
-					callback.apply(this, [mapTile]);
-				}
-			}
-			);
+			var targetX:Number = this.x + (dltX + dltY) * MapTile.TILE_WIDTH / 2;
+			var targetY:Number = this.y + (dltY - dltX) * MapTile.TILE_HEIGHT / 2;
 			
+			TweenLite.to(this, 0.6, {x:targetX, y:targetY}, 0, moveComplete, [targetTile, ways]);
 		}
 		
-		protected function doAttackAction(mapTile:MapTile, callback:Function):void
+		protected function moveComplete(targetTile:MapTile, ways:Array):void
 		{
-			moveThisToTile(mapTile, function():void
+			var crtTile:MapTile = MapTileUtil.getMapTile(_pos);
+			crtTile.setCharacter(null);
+			if (0 == ways.length)
 			{
-				if (null != callback)
-				{
-					callback.apply(this, [mapTile]);
-				}
+				targetTile.clear();//原先敌人死亡
+				targetTile.setCharacter(this);
+				RoundManager.nextRound();
 			}
-			);
+			else
+			{
+				targetTile.setCharacter(this);
+				move(ways);
+			}
 		}
 		
 		public function flip():void
 		{
 			setIsDark(false);
+			updatePosition();
 			RoundManager.nextRound();
 		}
 		
@@ -222,6 +208,17 @@ package com.xhj.www.component
 			return result;
 		}
 		
+		protected function updatePosition():void
+		{
+			var mapTile:MapTile = MapTileUtil.getMapTile(_pos);
+			if (mapTile)
+			{
+				const offsetY:int = GlobalParam.NUM_OFFSET_SPRITE_ON_MAPTILE_Y;
+				this.x = mapTile.x + (mapTile.width - this.width) / 2;
+				this.y = mapTile.y + (this.height == 85 ? offsetY : offsetY + 8);
+			}
+		}
+		
 		public function setNation(nation:int):void
 		{
 			_nation = nation;
@@ -237,13 +234,7 @@ package com.xhj.www.component
 		{
 			_pos = pos;
 			
-			var mapTile:MapTile = MapTileUtil.getMapTile(_pos);
-			if (mapTile)
-			{
-				const offsetY:int = GlobalParam.NUM_OFFSET_SPRITE_ON_MAPTILE_Y;
-				this.x = mapTile.x + (mapTile.width - this.width) / 2;
-				this.y = mapTile.y + (this.height == 85 ? offsetY : offsetY + 8);
-			}
+			updatePosition();
 		}
 		
 		public function getPos():uint

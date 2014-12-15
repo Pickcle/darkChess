@@ -67,7 +67,7 @@
 			this.onStartParams = $vars.onStartParams || [];
 			if (this.vars.ease == undefined)
 			{
-				this.vars.ease = easeOut;
+				this.vars.ease = linear;
 			}
 			else if (!(this.vars.ease is Function))
 			{
@@ -141,7 +141,7 @@
 					if (p == "volume" && this.target is MovieClip)
 					{ //If we're trying to change the volume of a MovieClip, then set up a quasai proxy using an instance of a TweenLite to control the volume.
 						_sound = this.target.soundTransform;
-						var volTween:TweenLite = new TweenLite(this, this.duration, {volumeProxy: this.vars[p], ease: easeOut, delay: ndl, overwrite: false, runBackwards: this.vars.runBackwards});
+						var volTween:TweenLite = new TweenLite(this, this.duration, {volumeProxy: this.vars[p], ease: linear, delay: ndl, overwrite: false, runBackwards: this.vars.runBackwards});
 						volTween.endTarget = this.target;
 					}
 					else if (p.toLowerCase() == "mccolor" && this.target is DisplayObject)
@@ -330,6 +330,11 @@
 		private static function easeOut($t:Number, $b:Number, $c:Number, $d:Number):Number
 		{
 			return -$c * ($t /= $d) * ($t - 2) + $b;
+		}
+		
+		private static function linear($t:Number, $b:Number, $c:Number, $d:Number):Number
+		{
+			return $c * ($t /= $d) + $b;
 		}
 
 		//---- GETTERS / SETTERS -----------------------------------------------------------------------
