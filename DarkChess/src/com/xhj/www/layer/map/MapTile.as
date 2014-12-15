@@ -1,6 +1,7 @@
 package com.xhj.www.layer.map
 {
 	import com.xhj.www.App;
+	import com.xhj.www.GameManager;
 	import com.xhj.www.GlobalParam;
 	import com.xhj.www.component.AbstractSprite;
 	import com.xhj.www.component.GameObjectBase;
@@ -10,14 +11,12 @@ package com.xhj.www.layer.map
 	import flash.display.Bitmap;
 	import flash.events.MouseEvent;
 	
-	public class MapTile extends GameObjectBase
+	public class MapTile extends AStarNode
 	{
 		public static var TILE_WIDTH:int;
 		public static var TILE_HEIGHT:int;
 		
 		protected var _tileImg:Bitmap;
-		protected var _posX:int;
-		protected var _posY:int;
 		protected var _pos:int;
 		protected var _hitShape:GameObjectBase;
 		protected var _sprite:AbstractSprite;
@@ -130,19 +129,19 @@ package com.xhj.www.layer.map
 			this.y = (_posY - _posX) * (TILE_HEIGHT / 2);
 		}
 		
+		/**
+		 * 是否是障碍物，用于A*寻路 
+		 * @return 
+		 * 
+		 */		
+		public function getIsBlock():Boolean
+		{
+			return !(getEmpty() || getIsSameNation(GameManager.getCurrentNation()));
+		}
+		
 		public function getEmpty():Boolean
 		{
 			return null == _sprite;
-		}
-		
-		public function getPosX():int
-		{
-			return _posX;
-		}
-		
-		public function getPosY():int
-		{
-			return _posY;
 		}
 		
 		public function getPos():int
