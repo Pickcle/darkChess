@@ -117,6 +117,10 @@ package com.xhj.www.component
 			{
 				return;
 			}
+			if (this.parent)
+			{
+				this.parent.setChildIndex(this, this.parent.numChildren - 1);//将活跃人物置顶层
+			}
 			var nextTile:MapTile = ways.pop();
 			if (nextTile.getPos() != _pos)//不是当前格子
 			{
@@ -168,6 +172,10 @@ package com.xhj.www.component
 			_spriteName.visible = !_isDark;
 		}
 		
+		/**
+		 * 高亮可攻击范围
+		 * 
+		 */		
 		public function showAttackRange():void
 		{
 			var tiles:Array = getAttackRangeList();
@@ -176,6 +184,18 @@ package com.xhj.www.component
 				mapTile.turnGreen();
 			}
 			_targetList = tiles;
+		}
+		
+		/**
+		 * 取消高亮
+		 * 
+		 */		
+		public function hideAttackRange():void
+		{
+			for each (var mapTile:MapTile in _targetList)
+			{
+				mapTile.turnWhite();
+			}
 		}
 		
 		public function checkInTargetList(mapTile:MapTile):Boolean

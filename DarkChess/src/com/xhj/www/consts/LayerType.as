@@ -8,6 +8,9 @@ package com.xhj.www.consts
 		/**人物层*/
 		public static const CHARACTER:uint = 1;
 		
+		/**按钮层*/
+		public static const BUTTON:uint = 2;
+		
 		public function LayerType()
 		{
 		}

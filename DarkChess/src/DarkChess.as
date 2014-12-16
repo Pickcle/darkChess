@@ -47,10 +47,9 @@ package
 			
 			stage.addEventListener(MouseEvent.CLICK, function (e:MouseEvent):void
 			{
-				trace(e.target.toString());
-				if (e.target is MapTile)
+				if (e.target.parent is MapTile)
 				{
-					trace((e.target as MapTile).getPosX() + "" + (e.target as MapTile).getPosY());
+					trace("x:" + (e.target.parent as MapTile).getPosX() + "\ny:" + (e.target.parent as MapTile).getPosY());
 				}
 			});
 		}

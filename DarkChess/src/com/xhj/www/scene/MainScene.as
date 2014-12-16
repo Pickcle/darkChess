@@ -11,11 +11,6 @@ package com.xhj.www.scene
 			super();
 		}
 		
-		override protected function init():void
-		{
-			
-		}
-		
 		override public function exit():void
 		{
 			

@@ -5,7 +5,6 @@ package com.xhj.www.layer
 	import com.xhj.www.GlobalParam;
 	import com.xhj.www.LayerManager;
 	import com.xhj.www.RoundManager;
-	import com.xhj.www.command.FlipCommand;
 	import com.xhj.www.component.AbstractLayer;
 	import com.xhj.www.component.AbstractSprite;
 	import com.xhj.www.component.GameObjectBase;
@@ -91,8 +90,11 @@ package com.xhj.www.layer
 			}
 			if (sprite.getNation() == GameManager.getCurrentNation())//点击自己士兵
 			{
-				resetMapTile();
 				_status = 2;
+				if (_selectedSprite)
+				{
+					_selectedSprite.hideAttackRange();
+				}
 				_selectedSprite = sprite;
 				sprite.showAttackRange();
 				return;
@@ -102,7 +104,6 @@ package com.xhj.www.layer
 				_selectedSprite.goto(targetTile);
 				return;
 			}
-			
 		}
 		
 		public function getLayerWidth():Number
