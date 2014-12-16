@@ -141,8 +141,6 @@ package com.xhj.www.component
 		
 		protected function moveComplete(targetTile:MapTile, ways:Array):void
 		{
-			var crtTile:MapTile = MapTileUtil.getMapTile(_pos);
-			crtTile.setCharacter(null);
 			if (0 == ways.length)
 			{
 				targetTile.clear();//原先敌人死亡
@@ -151,7 +149,7 @@ package com.xhj.www.component
 			}
 			else
 			{
-				targetTile.setCharacter(this);
+				_pos = targetTile.getPos();		//目前移动到pos上
 				move(ways);
 			}
 		}
