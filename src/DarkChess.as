@@ -16,7 +16,7 @@ package
 	import flash.events.MouseEvent;
 	import flash.system.Security;
 	
-	[SWF(frameRete="30", width="1280", height="720")]
+	[SWF(frameRate="30", width="1280", height="720")]
 	public class DarkChess extends Sprite
 	{
 		public function DarkChess()
