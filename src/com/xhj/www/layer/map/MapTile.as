@@ -91,12 +91,6 @@ package com.xhj.www.layer.map
 			}
 		}
 		
-		public function turnRed():void
-		{
-			BitmapUtil.disposeBitmapData(_tileImg);
-			_tileImg.bitmapData = BitmapUtil.getBitmapData("TILE_RED");
-		}
-		
 		public function turnGreen():void
 		{
 			BitmapUtil.disposeBitmapData(_tileImg);

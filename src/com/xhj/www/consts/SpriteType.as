@@ -5,7 +5,7 @@ package com.xhj.www.consts
 		/**农民 攻击距离直向1*/
 		public static const FARMER:int = 1;
 		
-		/**士兵 攻击距离直向2*/
+		/**枪兵 攻击距离直向2*/
 		public static const SOLDIER:int = 2;
 		
 		/**军师 攻击距离周围1*1*/

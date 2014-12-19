@@ -1,0 +1,5 @@
+1.场景drag		GameScene drag的rect
+2.计算攻击范围		MapTileUtil sin的运用 深度遍历
+3.地图制作		MapLayer 绘制菱形 坐标偏移
+4.依赖注入		MapTile中注入Sprite
+5.坐标转换

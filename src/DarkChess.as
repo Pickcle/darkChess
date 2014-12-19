@@ -49,7 +49,7 @@ package
 			{
 				if (e.target.parent is MapTile)
 				{
-					trace("x:" + (e.target.parent as MapTile).getPosX() + "\ny:" + (e.target.parent as MapTile).getPosY());
+					trace("(" + (e.target.parent as MapTile).getPosX() + "," + (e.target.parent as MapTile).getPosY() + ")");
 				}
 			});
 		}

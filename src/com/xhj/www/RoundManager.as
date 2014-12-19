@@ -1,6 +1,5 @@
 package com.xhj.www
 {
-	import com.xhj.www.component.AbstractCommand;
 	import com.xhj.www.scene.GameScene;
 
 	public class RoundManager

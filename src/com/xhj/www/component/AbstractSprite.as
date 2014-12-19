@@ -53,13 +53,13 @@ package com.xhj.www.component
 			_spriteName.height = 25;
 			_spriteName.textColor = getNationColor();
 			_spriteName.defaultTextFormat = tf;
-			_spriteName.text = getSpriteName();
-			this.addChild(_spriteName);
+//			_spriteName.text = getSpriteName();
+//			this.addChild(_spriteName);
 			
 			setIsDark(true);
 			
 			_spriteName.x = (_spriteImg.width - _spriteName.width) / 2;
-			_spriteName.y = 10;
+			_spriteName.y = (_spriteImg.height - _spriteName.height) / 2;
 		}
 		
 		override protected function uninstallComponent():void
@@ -77,33 +77,6 @@ package com.xhj.www.component
 		
 		override protected function uninstallListener():void
 		{
-		}
-		
-		protected function getSpriteName():String
-		{
-			return "";
-		}
-		
-		public function goto(mapTile:MapTile):void
-		{
-			var oldTile:MapTile = MapTileUtil.getMapTile(_pos);
-			oldTile.setCharacter(null);
-			var ways:Array = getWays(oldTile, mapTile);
-			if (mapTile.getEmpty())//空地
-			{
-				move(ways);
-			}
-			else//敌人
-			{
-				move(ways);
-//				attack(mapTile);
-			}
-		}
-		
-		public function die():void
-		{
-			DisplayObjectUtil.removeFromParent(this);
-			LayerManager.removeCharacter(this);
 		}
 		
 		protected function getWays(startTile:MapTile, endTile:MapTile):Array
@@ -158,18 +131,97 @@ package com.xhj.www.component
 			}
 		}
 		
+		protected function setIsDark(value:Boolean):void
+		{
+			_isDark = value;
+			_spriteImg.bitmapData = _isDark ? BitmapUtil.getBitmapData("SPRITE_9") : BitmapUtil.getBitmapData("SPRITE_" + _type + "_" + _nation);
+			_spriteName.visible = !_isDark;
+		}
+		
+		protected function getAttackRangeList():Array
+		{
+			return [];
+		}
+		
+		protected function getNationColor():uint
+		{
+			var result:uint;
+			switch (_nation)
+			{
+				case NationType.SHU:
+					result = 0x00ff00;
+					break;
+				case NationType.WEI:
+					result = 0x0000ff;
+					break;
+				case NationType.WU:
+					result = 0xff0000;
+					break;
+			}
+			return result;
+		}
+		
+		protected function updatePosition():void
+		{
+			var mapTile:MapTile = MapTileUtil.getMapTile(_pos);
+			if (mapTile)
+			{
+				const offsetY:int = GlobalParam.NUM_OFFSET_SPRITE_ON_MAPTILE_Y;
+				this.x = mapTile.x + (mapTile.width - this.width) / 2;
+				this.y = mapTile.y + (this.height == 85 ? offsetY : offsetY + 15);
+			}
+		}
+		
+		protected function getSpriteName():String
+		{
+			return "";
+		}
+		
+		protected function getSpriteNationName():String
+		{
+			var nationName:String;
+			switch (_nation)
+			{
+				case NationType.SHU:
+					nationName = "蜀";
+					break;
+				case NationType.WEI:
+					nationName = "魏";
+					break;
+				case NationType.WU:
+					nationName = "吴";
+					break;
+			}
+			return nationName;
+		}
+		
+		public function goto(mapTile:MapTile):void
+		{
+			var oldTile:MapTile = MapTileUtil.getMapTile(_pos);
+			oldTile.setCharacter(null);
+			var ways:Array = getWays(oldTile, mapTile);
+			if (mapTile.getEmpty())//空地
+			{
+				move(ways);
+			}
+			else//敌人
+			{
+				move(ways);
+//				attack(mapTile);
+			}
+		}
+		
+		public function die():void
+		{
+			DisplayObjectUtil.removeFromParent(this);
+			LayerManager.removeCharacter(this);
+		}
+		
 		public function flip():void
 		{
 			setIsDark(false);
 			updatePosition();
 			RoundManager.nextRound();
-		}
-		
-		private function setIsDark(value:Boolean):void
-		{
-			_isDark = value;
-			_spriteImg.bitmapData = _isDark ? BitmapUtil.getBitmapData("SPRITE_9") : BitmapUtil.getBitmapData("SPRITE_" + _type);
-			_spriteName.visible = !_isDark;
 		}
 		
 		/**
@@ -203,44 +255,11 @@ package com.xhj.www.component
 			return _targetList.indexOf(mapTile) != -1;
 		}
 		
-		protected function getAttackRangeList():Array
-		{
-			return [];
-		}
-		
-		protected function getNationColor():uint
-		{
-			var result:uint;
-			switch (_nation)
-			{
-				case NationType.SHU:
-					result = 0x00ff00;
-					break;
-				case NationType.WEI:
-					result = 0x0000ff;
-					break;
-				case NationType.WU:
-					result = 0xff0000;
-					break;
-			}
-			return result;
-		}
-		
-		protected function updatePosition():void
-		{
-			var mapTile:MapTile = MapTileUtil.getMapTile(_pos);
-			if (mapTile)
-			{
-				const offsetY:int = GlobalParam.NUM_OFFSET_SPRITE_ON_MAPTILE_Y;
-				this.x = mapTile.x + (mapTile.width - this.width) / 2;
-				this.y = mapTile.y + (this.height == 85 ? offsetY : offsetY + 8);
-			}
-		}
-		
 		public function setNation(nation:int):void
 		{
 			_nation = nation;
 			_spriteName.textColor = getNationColor();
+			_spriteName.text = getSpriteNationName();
 		}
 		
 		public function getNation():int
