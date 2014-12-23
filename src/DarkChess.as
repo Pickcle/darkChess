@@ -1,13 +1,11 @@
 package
 {
-	import com.demonsters.debugger.MonsterDebugger;
 	import com.xhj.www.App;
 	import com.xhj.www.AssetsManager;
 	import com.xhj.www.RoundManager;
 	import com.xhj.www.SceneManager;
 	import com.xhj.www.consts.SceneType;
 	import com.xhj.www.layer.map.MapTile;
-	import com.xhj.www.scene.GameScene;
 	
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
@@ -42,8 +40,6 @@ package
 			App.stage = stage;
 			App.myNation = 1;
 			AssetsManager.init(startGame);
-			
-			MonsterDebugger.initialize(this);
 			
 			stage.addEventListener(MouseEvent.CLICK, function (e:MouseEvent):void
 			{
